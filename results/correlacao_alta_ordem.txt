@@ -1,0 +1,15 @@
+# Teste de Correlação de Ordem Alta
+
+Para medir corr(x[n], x[n+k]) para k=1..1000, recomenda-se usar Python ou outra linguagem de análise de dados.
+
+Exemplo de script Python:
+
+import numpy as np
+with open('rctm_all.bin', 'rb') as f:
+    data = np.frombuffer(f.read(1000000), dtype=np.uint8)
+    bits = np.unpackbits(data)
+
+corrs = [np.corrcoef(bits[:-k], bits[k:])[0,1] for k in range(1,1001)]
+print(corrs)
+
+Salve os resultados aqui para análise.

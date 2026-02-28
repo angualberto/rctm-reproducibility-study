@@ -1,0 +1,2 @@
+-rw-rw-r-- 1 andre andre 4,8M fev 27 09:35 /home/andre/Documentos/resultado/test.gz
+-rw-rw-r-- 1 andre andre 4,8M fev 27 08:58 rctm_all.bin

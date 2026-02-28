@@ -1,0 +1,10 @@
+# Complexidade Linear (Berlekamp–Massey)
+
+Para análise automática, utilize ferramentas como:
+- NIST STS (LinearComplexity)
+- TestU01 (se disponível)
+- Scripts Python (pyfinite, numpy, etc)
+
+Os resultados do Dieharder já sugerem problemas na complexidade linear.
+
+Se desejar um script para calcular explicitamente, posso gerar um exemplo em Python.
