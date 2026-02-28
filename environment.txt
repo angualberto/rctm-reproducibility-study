@@ -1,0 +1,11 @@
+# Ambiente de execução
+
+- Sistema operacional: Linux x86_64
+- Compilador: GCC 13.x
+- Bibliotecas: TestU01, Dieharder, ent
+- Python 3.x (para scripts auxiliares)
+- Dependências: numpy
+
+Para instalar dependências:
+
+sudo apt install build-essential dieharder libtestu01-0 libtestu01-dev ent python3-numpy
