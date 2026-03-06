@@ -6,6 +6,14 @@
 
 This section summarizes an independent reproducibility assessment of the Robust Chaotic Tent Map (RCTM) random number generator implementation available in this repository. The objective is to verify whether the observed statistical behavior is consistent across independent execution, and to document both positive and negative findings with full transparency.
 
+\subsection{Repository and Data Availability}
+
+All source code, test scripts, raw test results, and documentation are publicly available at:
+
+\texttt{https://github.com/angualberto/rctm-reproducibility-study}
+
+The repository includes complete test batteries, binary data files (\texttt{agle\_v2\_10m.bin}, \texttt{rctm61.81\_c.bin}), Dieharder results, LaTeX source for this report, and comprehensive documentation (README, quickstart guide, research findings). This enables full independent verification and replication of all findings presented in this study.
+
 \subsection{Experimental Setup}
 
 The experiments were executed on Linux x86\_64 using IEEE-754 double precision arithmetic and C/Python tooling available in the repository. The main analyzed stream was \texttt{agle\_v2\_10m.bin} (10 MB), with additional statistics extracted from:
