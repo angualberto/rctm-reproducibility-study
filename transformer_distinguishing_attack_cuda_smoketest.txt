@@ -1,0 +1,29 @@
+/home/andre/Imagens/mestrado/Hardware-Induced-Irreversibility-in-Chaotic-Maps-main/scripts/analise/test_transformer_distinguishing.py:208: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_cuda)
+=== Transformer Distinguishing Attack ===
+
+Generating AGLE...
+Generating ChaCha20...
+Reading /dev/urandom...
+Train samples: 14400
+Test samples: 3600
+Window: 64 bytes
+Classes: 3 (0=AGLE, 1=ChaCha20, 2=/dev/urandom)
+Device: cuda (NVIDIA GeForce RTX 3060)
+
+Training Transformer...
+
+/home/andre/Imagens/mestrado/Hardware-Induced-Irreversibility-in-Chaotic-Maps-main/scripts/analise/test_transformer_distinguishing.py:223: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=use_cuda, dtype=torch.float16):
+epoch  0 loss 1.135654 train_acc 33.22%
+epoch  5 loss 1.100441 train_acc 33.60%
+
+Evaluating...
+
+==============================
+RESULT
+==============================
+Accuracy: 32.2500%
+Random baseline: 33.3333%
+
+✅ PASS: AGLE indistinguishable from ChaCha20 and /dev/urandom

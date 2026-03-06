@@ -1,0 +1,4 @@
+=== ML Predictability Test ===
+
+⚠️  PyTorch not installed. Skipping ML test.
+Install with: pip install torch

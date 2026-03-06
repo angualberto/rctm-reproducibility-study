@@ -1,0 +1,91 @@
+================================================================================
+    RELATÓRIO DE TESTES DE SEGURANÇA E QUALIDADE - AGLE v2
+================================================================================
+
+Data de execução: $(date '+%d/%m/%Y %H:%M:%S')
+Gerador: AGLE v2 Improved (α=3.90, β=3.90, ε=0.0100)
+
+================================================================================
+ARQUIVOS GERADOS
+================================================================================
+
+1. DADOS BINÁRIOS
+   - dados/bins/agle_bits_1gb.bin          (954 MB - binário)
+   - dados/bins/agle_bits_1m_bits.txt      (1.000.000 bits ASCII)
+
+2. TESTES EXECUTADOS E RESULTADOS (todos em .txt)
+   
+   a) NIST Linear Complexity Test (Berlekamp-Massey)
+      Arquivo: resultados/analises/nist_linear_complexity_resultado.txt
+      Objetivo: Detectar se RNG pode ser aproximado por LFSR
+      
+   b) State Recovery Attack Test
+      Arquivo: resultados/analises/state_recovery_test.txt  
+      Objetivo: Detectar recuperação de estado interno
+      Resultado: ✅ PASSED - Nenhuma repetição de estado detectada
+      
+   c) Shannon Entropy Test
+      Arquivo: resultados/analises/entropy_test.txt
+      Objetivo: Medir entropia (ideal: 7.999-8.000 bits/byte)
+      Resultado: ✅ PASSED - Entropia: 7.999979 bits/byte (EXCELENTE)
+      
+   d) Cycle Detection Test
+      Arquivo: resultados/analises/cycle_detection_test.txt
+      Objetivo: Detectar finite precision collapse
+      Resultado: ⚠️  Ciclo detectado em 111.332 posições
+      
+   e) ML Predictability Test
+      Arquivo: resultados/analises/predictability_ml_test.txt
+      Objetivo: Testar se rede neural consegue prever saída
+      Resultado: SKIPPED (PyTorch não instalado)
+
+================================================================================
+RESUMO DOS RESULTADOS
+================================================================================
+
+✅ APROVADOS:
+   - State Recovery: Sem repetições detectadas
+   - Entropia Shannon: 7.999979/8.000 (quase perfeita)
+   
+⚠️  ATENÇÃO:
+   - Cycle Detection: Valor repetido em 111k posições
+     (Pode ser aceitável dependendo do contexto - birthday paradox)
+
+⏭️  NÃO EXECUTADOS:
+   - ML Predictability: Requer PyTorch
+     Instalar com: pip install torch
+
+================================================================================
+COMANDOS USADOS
+================================================================================
+
+1. Geração de dados com pipe e truncamento:
+   ./versoes/v2/binarios/agle_v2_improved --stdout 123456789 | head -c 1000000000 > dados/bins/agle_bits_1gb.bin
+
+2. Conversão para bits ASCII:
+   xxd -b dados/bins/agle_bits_1gb.bin | awk '{for(i=2;i<=NF-1;i++) if($i ~ /^[01]{8}$/) printf $i;}' | head -c 1000000 > dados/bins/agle_bits_1m_bits.txt
+
+3. NIST Linear Complexity:
+   cd NIST-Statistical-Test-Suite/sts
+   ./assess 1000000 < input_script
+
+4. Testes Python:
+   python3 scripts/analise/test_state_recovery.py
+   python3 scripts/analise/test_entropy.py
+   python3 scripts/analise/test_cycle_detection.py
+   python3 scripts/analise/test_predictability_ml.py
+
+================================================================================
+ARQUIVOS DE RESULTADO EM TXT
+================================================================================
+
+Todos no diretório: resultados/analises/
+
+- nist_linear_complexity_resultado.txt
+- state_recovery_test.txt
+- entropy_test.txt
+- cycle_detection_test.txt
+- predictability_ml_test.txt
+- INDICE_TESTES_SEGURANCA.txt (este arquivo)
+
+================================================================================

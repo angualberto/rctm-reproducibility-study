@@ -1,0 +1,64 @@
+/tmp/compare_cycle_rngs.py:58: RuntimeWarning: divide by zero encountered in log2
+  expected_cycle = f"> 2^{np.log2(count):.0f}"
+
+======================================================================
+COMPARAÇÃO DE CYCLE DETECTION ENTRE RNGs
+======================================================================
+
+[1/4] AGLE V4
+
+======================================================================
+Testando: AGLE V4 (Xorshift128+ + Chaos + SHAKE256)
+======================================================================
+Value 2110927494 repetido após 16,983 valores
+
+Resultados:
+  Valores analisados: 34,180
+  Valores únicos: 34,180
+  Cobertura: 100.00%
+  Ciclo detectado em: 16,983 valores
+
+[2/4] MT19937 (Mersenne Twister)
+
+======================================================================
+Testando: MT19937 (2^19937)
+======================================================================
+Value 892614756 repetido após 20 valores
+
+Resultados:
+  Valores analisados: 236
+  Valores únicos: 236
+  Cobertura: 100.00%
+  Ciclo detectado em: 20 valores
+
+[3/4] ChaCha20
+
+======================================================================
+Testando: ChaCha20 (2^512)
+======================================================================
+
+Resultados:
+  Valores analisados: 0
+  Valores únicos: 0
+  Cobertura: 0.00%
+  Ciclo: > 0 valores
+
+
+======================================================================
+RESUMO COMPARATIVO
+======================================================================
+
+RNG                            Ciclo Detectado           Teórico        
+----------------------------------------------------------------------
+AGLE V4 (Xorshift128+ + Chaos + SHAKE256) 16,983                    ~2^14          
+MT19937 (2^19937)              20                        ~2^4           
+ChaCha20 (2^512)               > 0                       > 2^-inf       
+
+======================================================================
+RANKING (Melhor = Ciclo maior)
+======================================================================
+1. ChaCha20 (2^512)                         Ciclo: > 0
+2. AGLE V4 (Xorshift128+ + Chaos + SHAKE256) Ciclo: 16,983
+3. MT19937 (2^19937)                        Ciclo: 20
+
+======================================================================

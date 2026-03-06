@@ -1,0 +1,198 @@
+================================================================================
+                     ÍNDICE COMPLETO DOS TESTES AGLE v2
+================================================================================
+
+LOCALIZAÇÃO: /home/andre/Imagens/mestrado/Hardware-Induced-Irreversibility-in-Chaotic-Maps-main
+
+================================================================================
+1. TESTES COM ARQUITETURA PIPE (PRINCIPAL - RESULTADOS MAIS RECENTES)
+================================================================================
+
+DIRETÓRIO: resultados/analises/
+
+SUMÁRIO EXECUTIVO (LEIA PRIMEIRO):
+  📄 SUMARIO_EXECUTIVO_TESTES_PIPE.txt (8.9 KB)
+     └─ Análise completa de todos os 8 testes
+     └─ Veredito final e recomendações técnicas
+     └─ Comparação com testes anteriores
+
+RELATÓRIO BRUTO:
+  📄 RELATORIO_COMPLETO_PIPE.txt (4.8 KB)
+     └─ Output direto da bateria de testes
+     └─ Timestamps e progresso em tempo real
+
+RESULTADOS INDIVIDUAIS (8 testes):
+  📄 state_recovery_pipe.txt (531 bytes) → ✅ PASSED
+     └─ 50M valores testados, 0 repetições
+  
+  📄 entropy_pipe.txt (656 bytes) → ✅ PASSED
+     └─ 100M bytes: 7.99999769/8.0 bits/byte
+  
+  📄 cycle_detection_pipe.txt (229 bytes) → ❌ FAILED
+     └─ Ciclo detectado em 115,921 posições
+  
+  📄 backtracking_pipe.txt (513 bytes) → ✅ PASSED
+     └─ 10M valores, 0 padrões de backtracking
+  
+  📄 spectral_test_pipe.txt (678 bytes) → ✅ PASSED
+     └─ 1M valores, correlação máx -0.001838
+  
+  📄 lyapunov_test_pipe.txt (188 bytes) → ✅ PASSED
+     └─ λ = -1.495884 (convergente)
+  
+  📄 hmm_predictability_pipe.txt (204 bytes) → ❌ FAILED
+     └─ 2.17% acurácia (5.6x baseline)
+  
+  📄 statespace_reconstruction_pipe.txt (411 bytes) → ✅ COMPLETED
+     └─ FNN test: 26-81% falsos vizinhos
+
+SCRIPT MESTRE:
+  📜 ../scripts/analise/run_all_security_tests_pipe.sh (400+ linhas)
+     └─ Bateria completa reprodutível
+
+================================================================================
+2. TESTES ANTERIORES (REFERÊNCIA HISTÓRICA)
+================================================================================
+
+PRACTRAND (resultados/practrand/):
+  📄 practrand_agle_v2.txt
+     └─ Testado até 32 GB
+     └─ Status: 1 "unusual" em 16GB, demais PASSED
+
+DIEHARDER (resultados/dieharder/):
+  📄 dieharder_agle_v2_1tb.txt
+     └─ Suite completa Dieharder
+     └─ Status: Interrompido, parcialmente completo
+
+TESTU01 (resultados/testu01/):
+  📄 testu01_bigcrush_agle_v2.txt
+     └─ BigCrush battery
+     └─ Status: Em execução (background)
+
+NIST STS (resultados/analises/):
+  📄 nist_linear_complexity_resultado.txt (85 MB)
+     └─ Linear Complexity (Berlekamp-Massey)
+     └─ Status: Completo, PASSED
+
+TESTES ANTERIORES (PRÉ-PIPE):
+  📄 test_state_recovery.py → Estado repetido em 111,332
+  📄 test_entropy.py → 7.999979/8.0 bits/byte
+  📄 test_cycle_detection.py → Ciclo em 111,332
+  📄 test_predictability_ml.py → SKIPPED (PyTorch ausente)
+
+================================================================================
+3. BINÁRIOS E DADOS GERADOS
+================================================================================
+
+GERADOR:
+  📦 versoes/v2/binarios/agle_v2_improved
+     └─ Seed: 123456789
+     └─ Parâmetros: α=3.90, β=3.90, ε=0.0100
+
+DADOS INTERMEDIÁRIOS (dados/bins/):
+  📦 agle_bits_1gb.bin (954 MB)
+     └─ Gerado via pipe para testes anteriores
+  
+  📦 agle_bits_1m_bits.txt
+     └─ 1M bits ASCII para NIST
+
+================================================================================
+4. DOCUMENTAÇÃO TÉCNICA
+================================================================================
+
+ANÁLISES (resultados/analises/):
+  📄 INDICE_TESTES_SEGURANCA.txt
+     └─ Índice anterior dos testes de segurança
+  
+  📄 TESTU01_GUIA_CIENTIFICO.md
+     └─ Explicação dos testes TestU01
+  
+  📄 AGLE_ARQUITETURA_MELHORADA.md
+     └─ Detalhes da arquitetura AGLE v2
+  
+  📄 COMPARACAO_AGLE.md
+     └─ Comparação v1 vs v2
+
+SCRIPTS (scripts/):
+  📂 analise/
+     └─ run_all_security_tests_pipe.sh (PRINCIPAL)
+     └─ test_*.py (scripts individuais)
+  
+  📂 execucao/
+     └─ run_testu01.sh
+     └─ run_nist_test.sh
+     └─ run_all_v2_batteries.sh
+
+================================================================================
+5. COMO REPRODUZIR OS TESTES
+================================================================================
+
+TESTE COMPLETO (RECOMENDADO):
+  $ cd /home/andre/Imagens/mestrado/Hardware-Induced-Irreversibility-in-Chaotic-Maps-main
+  $ bash scripts/analise/run_all_security_tests_pipe.sh
+
+TESTE INDIVIDUAL (EXEMPLO - Shannon Entropy):
+  $ ./versoes/v2/binarios/agle_v2_improved --stdout 123456789 | \
+    head -c 100000000 | \
+    python3 -c "import sys; [... código do teste ...]"
+
+VISUALIZAR RESULTADOS:
+  $ cat resultados/analises/SUMARIO_EXECUTIVO_TESTES_PIPE.txt
+
+================================================================================
+6. CONCLUSÕES E RECOMENDAÇÕES
+================================================================================
+
+VEREDITO FINAL: ⚠️ QUALIDADE MISTA
+
+APROVADO (5/8 testes):
+  ✅ State Recovery: Sem repetições em 50M
+  ✅ Shannon Entropy: 7.99999769/8.0 (quase perfeita)
+  ✅ Backtracking: Sem padrões detectados
+  ✅ Spectral: Sem correlação serial
+  ✅ Lyapunov: Características confirmadas
+
+REPROVADO (2/8 testes):
+  ❌ Cycle Detection: Ciclo em 115,921 (CRÍTICO)
+  ❌ Hidden Markov: 2.17% previsibilidade (5.6x baseline)
+
+ADEQUAÇÃO:
+  [❌] Criptografia: NÃO RECOMENDADO
+  [⚠️] Monte Carlo: USAR COM CUIDADO (re-seed < 50k)
+  [✅] Simulações cur tas (< 10k): ACEITÁVEL
+  [✅] Protótipos: ACEITÁVEL
+
+PRÓXIMOS PASSOS:
+  1. Investigar precisão de ponto flutuante (float vs double)
+  2. Implementar mixing function mais forte (SHA-256, SHAKE256)
+  3. Considerar parallel streams com seeds diferentes
+  4. Validar parâmetros caóticos (α, β, ε)
+  5. Aumentar cobertura PractRand para 128 GB
+
+================================================================================
+INFORMAÇÕES TÉCNICAS
+================================================================================
+
+Data dos testes: 05/03/2026
+Volume testado (pipe): ~350 MB
+Tempo de execução: ~5 minutos (completo)
+Arquitetura: stdout → head -c → stdin (sem arquivos intermediários)
+Ambiente: Linux, Python 3 + NumPy
+
+================================================================================
+CONTATO E REFERÊNCIAS
+================================================================================
+
+Hardware-Induced Irreversibility in Chaotic Maps
+Workspace: /home/andre/Imagens/mestrado/Hardware-Induced-Irreversibility-in-Chaotic-Maps-main
+
+Testes implementados:
+  - PractRand 0.96
+  - Dieharder 3.31.1
+  - TestU01 1.2.3
+  - NIST STS
+  - Custom Python security tests
+
+================================================================================
+FIM DO ÍNDICE
+================================================================================

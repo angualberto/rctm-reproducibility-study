@@ -1,0 +1,23 @@
+=== Iteração 1/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 2/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 3/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 4/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 5/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 6/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 7/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 8/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 9/10 ===
+Arquivo gerado: 40000000 bytes
+=== Iteração 10/10 ===
+Arquivo gerado: 40000000 bytes
+=== Geração completa! ===
+Tamanho total: 400000000 bytes (~381MB)
+Iniciando testes dieharder...

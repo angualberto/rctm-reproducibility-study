@@ -1,0 +1,38 @@
+/home/andre/Imagens/mestrado/Hardware-Induced-Irreversibility-in-Chaotic-Maps-main/scripts/analise/test_predictability_ml.py:48: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /pytorch/torch/csrc/utils/tensor_new.cpp:253.)
+  X = torch.tensor(X, dtype=torch.float32) / 255.0
+=== ML Predictability Test (Correct - Classification) ===
+
+Read 200000 bytes from file
+Training samples: 159987
+Testing samples: 39997
+Window size: 16 bytes
+Output classes: 256 (0-255)
+
+Training neural network...
+
+  Epoch  0: loss = 5.5616
+  Epoch  3: loss = 5.5540
+  Epoch  6: loss = 5.5503
+  Epoch  9: loss = 5.5481
+  Epoch 12: loss = 5.5469
+
+Evaluating on test set...
+
+============================================================
+RESULTS:
+  Training accuracy:   0.462%
+  Test accuracy:       0.328%
+  Random baseline:     0.391%
+  Test/Baseline ratio: 0.84x
+============================================================
+
+INTERPRETATION:
+  0.328% < 0.586% → ✅ PASSED: No learnable structure
+
+REFERENCE THRESHOLDS:
+  0.39% - 0.60%: Truly random
+  0.60% - 1.20%: Acceptable
+  1.20% - 2.00%: Suspicious
+  > 2.00%:       Predictable RNG
+
+FINAL VERDICT: PASSED

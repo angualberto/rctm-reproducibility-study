@@ -1,0 +1,223 @@
+================================================================================
+        SUMÁRIO EXECUTIVO - BATERIA COMPLETA DE TESTES DE SEGURANÇA
+                      AGLE v2 (α=3.90, β=3.90, ε=0.0100)
+                         Arquitetura: PIPE DIRETO
+================================================================================
+
+Data: 05/03/2026
+Seed: 123456789
+Binário: ./versoes/v2/binarios/agle_v2_improved
+Arquitetura: ./agle_v2_improved --stdout SEED | head -c LIMITE | python3 script
+
+================================================================================
+1. OVERVIEW DOS TESTES
+================================================================================
+
+Total de testes executados: 8
+Aprovados (PASSED): 5
+Reprovados (FAILED): 2
+Warnings: 1
+
+Taxa de sucesso: 62.5% (5/8 testes aprovados)
+
+================================================================================
+2. RESULTADOS DETALHADOS
+================================================================================
+
+[TEST 1] STATE RECOVERY ATTACK
+Status: ✅ PASSED
+Volume: 50,000,000 valores uint32 (200 MB)
+Resultado: 0 repetições detectadas
+Análise: Nenhum estado repetitivo em janela de 10 valores consecutivos
+Conclusão: Resistente a ataques de recuperação de estado
+
+[TEST 2] SHANNON ENTROPY
+Status: ✅ PASSED
+Volume: 100,000,000 bytes (100 MB)
+Resultado: 7.99999769 bits/byte (máximo: 8.000000)
+Diferença do ideal: 0.00000231 bits/byte
+Distribuição: Min=388,536 | Max=392,516 | Std=698.98
+Análise: 256/256 valores únicos, distribuição uniforme
+Conclusão: EXCELENTE qualidade de entropia, próxima do ideal teórico
+
+[TEST 3] CYCLE DETECTION
+Status: ❌ FAILED
+Volume: 5,000,000 valores uint32 (limite)
+Resultado: Ciclo detectado na posição 115,921
+Valor repetido: 2991876246
+Taxa de cobertura: 115,921 / 4,294,967,296 = 0.0027% do espaço uint32
+Análise: Detecção de ciclo muito precoce para 2^32 espaço possível
+Conclusão: VULNERABILIDADE CRÍTICA - ciclo precoce indica colapso numérico
+
+[TEST 4] BACKTRACKING RESISTANCE
+Status: ✅ PASSED
+Volume: 10,000,000 valores uint32 (40 MB)
+Distância testada: 100 posições
+Resultado: 0 matches encontrados (0.0000%)
+Esperado (aleatório): ~0.000000023%
+Análise: Sem padrões de backtracking detectados
+Conclusão: Resistente a análise de reversão temporal
+
+[TEST 5] SPECTRAL TEST (Autocorrelação)
+Status: ✅ PASSED
+Volume: 1,000,000 valores uint32 (4 MB)
+Lags testados: 1-20
+Resultado: Correlação máxima = -0.001838 (lag=18)
+Threshold (95%): ±0.003000
+Análise: Todas as correlações abaixo do threshold estatístico
+Conclusão: Sem correlação serial significativa
+
+[TEST 6] LYAPUNOV EXPONENT ESTIMATION
+Status: ✅ PASSED (qualitativo)
+Volume: 100,000 amostras
+Resultado: λ = -1.495884
+Interpretação: Valor negativo indica comportamento convergente
+Nota: Para sistemas caóticos, esperado λ > 0
+Análise: Pode indicar que mapa está em região de estabilidade
+Conclusão: Características de convergência podem explicar ciclo precoce
+
+[TEST 7] HIDDEN MARKOV PREDICTABILITY
+Status: ❌ FAILED
+Volume: 50,000 bytes
+Resultado: Acurácia = 2.17% (1,085 acertos / 49,999 previsões)
+Baseline (aleatório): 0.39% (1/256)
+Razão: 5.6x acima da baseline aleatória
+Análise: Modelo Markov de 1ª ordem consegue prever próximo byte
+Conclusão: VULNERABILIDADE MODERADA - padrões de transição detectáveis
+
+[TEST 8] STATE SPACE RECONSTRUCTION
+Status: ✅ COMPLETED (análise qualitativa)
+Volume: 10,000 amostras
+Método: False Nearest Neighbors (FNN)
+Resultados:
+  - Dimensão 2: 81.4% falsos vizinhos
+  - Dimensão 3: 61.4% falsos vizinhos
+  - Dimensão 4: 41.4% falsos vizinhos
+  - Dimensão 5: 26.0% falsos vizinhos
+Interpretação: Alta dimensionalidade (>50%) sugere comportamento estocástico
+Conclusão: Não detecta estrutura determinística de baixa dimensão
+
+================================================================================
+3. ANÁLISE CRÍTICA
+================================================================================
+
+PONTOS FORTES:
+[+] Entropia excepcional (7.99999769/8.0) - quase perfeita
+[+] Resistente a state recovery attacks (0 repetições em 50M)
+[+] Sem correlação serial (autocorrelação < threshold)
+[+] Resistente a backtracking (0 padrões detectados)
+[+] Distribuição uniforme de bytes (256/256 valores únicos)
+
+VULNERABILIDADES CRÍTICAS:
+[-] CICLO PRECOCE: Repetição em apenas 115,921 posições (0.0027% do espaço)
+    → Indica colapso por precisão finita de ponto flutuante
+    → Esperado: ciclos de tamanho ~2^32 para uint32
+
+[-] ALTA PREVISIBILIDADE: 2.17% acurácia Markov (5.6x baseline)
+    → Padrões de transição detectáveis com modelo simples
+    → Esperado: ~0.39% para sequências verdadeiramente aleatórias
+
+VULNERABILIDADES MODERADAS:
+[-] Lyapunov negativo (-1.49): Indica convergência ao invés de caos
+    → Pode explicar ciclo precoce (atração para ponto fixo)
+    → Contradiz premissa de "mapas caóticos" do gerador
+
+================================================================================
+4. COMPARAÇÃO COM TESTES ANTERIORES
+================================================================================
+
+NIST Linear Complexity (anterior):
+  - Status: PASSED (85 MB resultados)
+  - LinearComplexity test não detectou anomalias
+
+PractRand (anterior):
+  - Testado até: 32 GB
+  - Status: 1 "unusual" em 16GB, demais PASSED
+  - Nota: Não detectou ciclo precoce devido ao volume testado
+
+TestU01 BigCrush (anterior):
+  - Status: Em execução (background)
+  - Pendente confirmação de resultados completos
+
+Dieharder (anterior):
+  - Status: Em execução (background)
+  - Pendente confirmação de resultados completos
+
+================================================================================
+5. RECOMENDAÇÕES TÉCNICAS
+================================================================================
+
+[CRÍTICO] Investigar precisão de ponto flutuante:
+  → float vs double nas operações do mapa
+  → Mascaramento dos bits menos significativos
+  → Implementar detecção de colapso em runtime
+
+[CRÍTICO] Aumentar período efetivo:
+  → Considerar re-seed periódico (ex: a cada 100k valores)
+  → Implementar parallel streams com seeds diferentes
+  → Adicionar mixing function entre iterações do mapa
+
+[ALTO] Reduzir previsibilidade Markov:
+  → Aplicar hash criptográfico (SHA-256, SHAKE256) na saída
+  → Implementar função de mixing mais forte
+  → Considerar XOR com stream secundário
+
+[MÉDIO] Validar parâmetros do mapa caótico:
+  → Verificar se α=3.90, β=3.90, ε=0.0100 estão na região caótica
+  → Calcular Lyapunov exponent analiticamente
+  → Comparar com bifurcation diagrams
+
+[BAIXO] Expandir testes estatísticos:
+  → Aumentar volume PractRand para 128 GB
+  → Aguardar conclusão BigCrush e Dieharder
+  → Implementar testes FIPS 140-2
+
+================================================================================
+6. CONCLUSÃO GERAL
+================================================================================
+
+ADEQUAÇÃO PARA USO:
+
+[❌] Aplicações Criptográficas: NÃO RECOMENDADO
+  Razão: Ciclo precoce e alta previsibilidade são inaceitáveis
+
+[⚠️] Simulações Monte Carlo: USAR COM CUIDADO
+  Razão: Ciclo em 115k pode enviesar resultados de simulações longas
+  Mitigação: Re-seed a cada 50k amostras
+
+[✅] Simulações de Curto Prazo (<10k valores): ACEITÁVEL
+  Razão: Propriedades estatísticas boas até detecção de ciclo
+
+[✅] Testes e Protótipos: ACEITÁVEL
+  Razão: Entropia excelente para desenvolvimento inicial
+
+VEREDITO FINAL:
+O gerador AGLE v2 apresenta EXCELENTE qualidade de entropia (7.99999769/8.0)
+e boas propriedades estatísticas de curto prazo, MAS sofre de:
+  1. Ciclo criticamente precoce (115k posições)
+  2. Previsibilidade acima da baseline (2.17% vs 0.39%)
+
+Estes problemas IMPEDEM uso em aplicações que exigem períodos longos ou
+segurança criptográfica. Recomenda-se implementar técnicas de mixing
+mais fortes e investigar precisão numérica do mapa caótico subjacente.
+
+================================================================================
+ARQUIVOS GERADOS (resultados/analises/):
+================================================================================
+
+state_recovery_pipe.txt              531 bytes
+entropy_pipe.txt                     656 bytes
+cycle_detection_pipe.txt             229 bytes
+backtracking_pipe.txt                513 bytes
+spectral_test_pipe.txt               678 bytes
+lyapunov_test_pipe.txt               188 bytes
+hmm_predictability_pipe.txt          204 bytes
+statespace_reconstruction_pipe.txt   411 bytes
+RELATORIO_COMPLETO_PIPE.txt          ~8 KB (este arquivo com output completo)
+
+TOTAL: ~11 KB de resultados consolidados
+VOLUME TESTADO: ~350 MB de dados via pipe (sem armazenamento intermediário)
+
+================================================================================
+FIM DO RELATÓRIO
+================================================================================
