@@ -1,0 +1,352 @@
+================================================================================
+                    RESULTADOS DOS TESTES PYTHON RCTM
+                            Data: 06/03/2026
+================================================================================
+
+ARQUIVO TESTADO: agle_v2_10m.bin (10 MB - Gerado com Robust Chaotic Tent Map)
+AMBIENTE: Python 3.12.3 | NumPy, SciPy, scikit-learn
+
+================================================================================
+1. SHANNON ENTROPY TEST (Amostra: 100.000 bytes)
+================================================================================
+
+Samples: 100,000 bytes
+Unique values: 256/256
+Shannon Entropy: 7.998454 bits/byte
+Max entropy: 8.000000 bits/byte
+Difference from max: 0.001546 bits/byte
+
+RESULTADO: ✅ PASSED
+ANÁLISE: Excelente entropia. Todos os 256 valores aparecem na amostra com 
+distribuição muito próxima do ideal (7.998 bits/byte, praticamente máximo de 8.0)
+
+
+================================================================================
+2. PERMUTATION ENTROPY TEST (Ordem 3)
+================================================================================
+
+Samples: 10,485,760 bytes
+Order: 3
+Unique patterns: 6 / 6 (máximo possível)
+Entropy: 1.7917592125983788
+Normalized entropy: 0.9999998567722507 (máximo: 1.0)
+
+RESULTADO: ✅ EXCELLENT
+ANÁLISE: Padrões de permutação mostram distribuição praticamente uniforme.
+O valor normalizado de 0.99999... indica aleatoriedade excelente na ordem 3.
+
+
+================================================================================
+3. N-GRAM PREDICTABILITY TEST (Amostra: 100.000 bytes)
+================================================================================
+
+2-GRAM MODEL (window = 1 byte):
+  Unique contexts: 256
+  Test predictions: 19,998
+  Correct: 326
+  Accuracy: 1.630%
+  Baseline (random): 0.391%
+  Ratio: 4.17x
+  → ❌ FAILED: High predictability
+
+3-GRAM MODEL (window = 2 bytes):
+  Unique contexts: 51,420
+  Test predictions: 19,997
+  Correct: 10,417
+  Accuracy: 52.093%
+  Baseline (random): 0.391%
+  Ratio: 133.36x
+  → ❌ FAILED: High predictability
+
+4-GRAM MODEL (window = 3 bytes):
+  Unique contexts: 99,683
+  Test predictions: 19,996
+  Correct: 19,943
+  Accuracy: 99.735%
+  Baseline (random): 0.391%
+  Ratio: 255.32x
+  → ❌ FAILED: High predictability
+
+INTERPRETAÇÃO DE RESULTADOS:
+  < 0.60%: Truly random ✅
+  0.60% - 1.20%: Acceptable ✅
+  1.20% - 2.00%: Suspicious ⚠️
+  > 2.00%: Predictable RNG ❌
+
+RESULTADO: ❌ FAILED
+ANÁLISE: O RNG mostra previsibilidade crescente com modelo N-gram. A acurácia
+de 1.63% (2-gram) já supera o limiar de "Suspicious" (1.20%). Os modelos de
+3 e 4-gramas mostram previsibilidade extremamente alta (>99%), indicando que
+há dependência serial significativa entre bytes consecutivos.
+
+
+================================================================================
+4. DISTINGUISHING ATTACK TEST (Amostra: 100.000 bytes)
+================================================================================
+
+Samples: 100,000
+Window: 4
+Unique patterns: 99,995
+Entropy: 16.609562764689866
+Max entropy: 32.0
+Normalized entropy: 0.5190488363965583
+
+RESULTADO: ❌ Distinguishable RNG
+ANÁLISE: A entropia normalizada de 0.519 é significativamente menor que 1.0,
+indicando que o RNG é distinguível de uma sequência verdadeiramente aleatória.
+
+
+================================================================================
+5. STATE RECONSTRUCTION ATTACK (Amostra: 500.000 bytes)
+================================================================================
+
+Samples: 125,000 (uint32)
+Embedding dimension: 4
+Delay: 1
+Reconstructed vectors: 124,997
+Mean neighbor distance: 0.032884239395737626
+
+RESULTADO: ✅ No recoverable state structure
+ANÁLISE: A distância média entre vizinhos próximos é muito pequena, indicando
+que não há estrutura de estado recuperável no espaço reconstruído. O sistema
+não apresenta vulnerabilidade óbvia a ataques de reconstrução de estado.
+
+
+================================================================================
+6. SERIAL CORRELATION TEST (LAG-1 Analysis)
+================================================================================
+
+Amostra: 100.000 bytes (99.999 pares consecutivos)
+
+LAG-1 (Correlação byte-a-byte):
+  Possíveis pares: 256² = 65.536
+  Pares únicos observados: 51.421
+  Cobertura: 78.46%
+
+RESULTADO: ❌ FAILED: Cobertura baixa
+ANÁLISE: A cobertura de apenas 78.46% indica que NOT TODOS os pares possíveis
+de bytes podem aparecer na sequência. Uma sequência verdadeiramente aleatória
+com 100k bytes deveria cobrir uma proporção significativamente maior de pares.
+Isso confirma a existência de DEPENDÊNCIA SERIAL.
+
+
+================================================================================
+7. BIT DISTRIBUTION TEST
+================================================================================
+
+Amostra: 100.000 bytes = 800.000 bits
+
+Distribuição:
+  Bits = 1: 399.911
+  Bits = 0: 400.089
+  Proporção 1s: 49.99%
+  Esperado: 50.00%
+
+RESULTADO: ✅ PASSED
+DIFERENÇA: 0.011% (excelente alinhamento)
+
+ANÁLISE: A distribuição individual de bits é praticamente perfeita. No entanto,
+isso contrasta com a forte previsibilidade serial detectada em testes anteriores,
+sugerindo que a aleatoriedade está presente ao nível individual mas falta
+aleatoriedade nas sequências.
+
+
+================================================================================
+8. CONSECUTIVE BYTE REPETITIONS TEST
+================================================================================
+
+Amostra: 100.000 bytes
+
+Repetições observadas: 376
+Repetições esperadas: 391 (estatisticamente)
+Razão observado/esperado: 0.96x
+
+RESULTADO: ✅ PASSED
+ANÁLISE: O número de bytes repetidos consecutivos está muito próximo do
+esperado estatisticamente. Isso é bom, mas novamente contrasta com a
+previsibilidade detectada em modelos N-gram.
+
+
+================================================================================
+9. AUTOCORRELATION ANALYSIS (Lag 1, 2, 4, 8, 16, 32)
+================================================================================
+
+Amostra: 50.000 bytes (float normalizados -1.0 a +1.0)
+
+Lag  | Autocorrelation | Status
+-----|-----------------|--------
+  1  |     0.005963    | ✅ Good
+  2  |     0.002162    | ✅ Good
+  4  |    -0.008212    | ✅ Good
+  8  |     0.003911    | ✅ Good
+ 16  |    -0.005646    | ✅ Good
+ 32  |     0.005856    | ✅ Good
+
+RESULTADO: ✅ PASSED
+ANÁLISE: Nenhuma correlação linear de Pearson significativa detectada. Todos
+os valores estão dentro do intervalo ±0.1, indicando que NÃO há autocorrelação
+LINEAR mensurável.
+
+OBSERVAÇÃO IMPORTANTE: Este resultado CONTRASTA com a previsibilidade de N-gram
+detectada (1.63% em 2-gramas). Isso sugere que:
+  - A correlação pode ser NÃO-LINEAR
+  - O modelo N-gram está capturando dependências estruturais que não são
+    capturadas pela correlação linear de Pearson
+  - O padrão pode ser mais sutil (ex: certos valores frequentemente seguem
+    outros valores sem correlação linear aparente)
+
+
+================================================================================
+RESUMO CONSOLIDADO
+================================================================================
+
+Teste                              | Resultado    | Confiança | Notas
+------------------------------------|--------------|-----------|---------------------------------------------
+Shannon Entropy (7.998 bits)       | ✅ PASSED    | Alta      | Excelente distribuição 
+Permutation Entropy (0.9999)       | ✅ EXCELLENT | Muito Alt | Padrões perfeitamente aleatórios
+N-gram Predictability (1.63%)      | ❌ FAILED    | Crítica   | Previsibilidade serial SIGNIFICANTE
+Distinguishing Attack (0.519)      | ❌ FAILED    | Alta      | RNG é DISTINGUÍVEL
+State Reconstruction               | ✅ PASSED    | Alta      | Sem estrutura de estado
+Serial Correlation LAG-1 (78.46%)  | ❌ FAILED    | Crítica   | Cobertura de pares BAIXA
+Bit Distribution (49.99%)          | ✅ PASSED    | Alta      | Distribuição individual perfeita
+Byte Repetitions (0.96x)           | ✅ PASSED    | Alta      | Número esperado de repetições
+Autocorrelation (Pearson)          | ✅ PASSED    | Alta      | Sem correlação LINEAR (mas N-gram falha!)
+
+SCORE GERAL: 6/9 testes passaram (67%)
+VULNERABILIDADES DETECTADAS: 
+  1. Previsibilidade serial NÃO-LINEAR (N-gram predictability)
+  2. Distinguibilidade do RNG (baixa entropia estrutural)
+  3. Cobertura incompleta de pares LAG-1 (falta de aleatoriedade pairwise)
+  
+ANOMALIA: Autocorrelação linear é ~0 mas N-gram predictability é alta,
+indicando que há dependências NÃO-LINEARES entre bytes consecutivos.
+
+
+================================================================================
+RECOMENDAÇÕES
+================================================================================
+
+1. 🔴 CRÍTICO: Previsibilidade serial de 1.63% em 2-gramas EXCEDE limiar
+   de 1.20% ("Suspicious"). A cobertura de LAG-1 de 78.46% (deveriam ser >95%)
+   confirma DEPENDÊNCIA SERIAL significativa. Isso indica que:
+   - O algoritmo RCTM NÃO está gerando sequências verdadeiramente aleatórias
+   - Há padrões determinísticos entre bytes consecutivos
+   - Não adequado para criptografia de segurança máxima
+
+2. 🟠 ALTO RISCO: O teste Distinguishing Attack (entropy 0.519/1.0) mostra que
+   o RNG é CLARAMENTE DISTINGUÍVEL de uma sequência aleatória. Isso permite
+   ataques estatísticos simples para detectar que NÃO é um TRNG.
+
+3. 🟡 PREOCUPAÇÃO: Os testes Dieharder já mostram múltiplas falhas:
+   - diehard_opso: FAILED
+   - diehard_squeeze: FAILED
+   - marsaglia_tsang_gcd: FAILED (x2)
+   - rgb_lagged_sum: FAILED (11 testes)
+   - dab_bytedistrib: FAILED
+   - dab_filltree2: FAILED (x2)
+   - dab_monobit2: FAILED
+   
+   TOTAL: 17+ testes falharam em Dieharder!
+
+4. ✅ PONTOS POSITIVOS:
+   - Entropia Shannon individual excelente (7.998 bits)
+   - Distribuição de permutações muito boa (0.9999)
+   - Distribuição individual de bits perfeita (49.99%)
+   - Número de repetições dentro do esperado
+   - Sem estrutura exploratória óbvia (estado)
+
+5. 🔧 CAUSA PROVÁVEL:
+   A discrepância entre excelente distribuição individual (Shannon, bits) MAS
+   previsibilidade em sequências (N-gram, LAG-1) sugere que o algoritmo RCTM
+   gera bytes com boa distribuição ISOLADAMENTE, mas há CORRELAÇÃO entre bytes
+   consecutivos. Isso é típico de:
+   - Mapas caóticos com período curto ou estrutura
+   - Falta de mixing adequado entre iterações
+   - Necessidade de "thinning" (usar cada N-ésimo byte ao invés de todos)
+
+6. ⚠️  SEGURANÇA CRIPTOGRÁFICA:
+   NÃO recomendado para uso em criptografia sem modificações significativas.
+   Adequado para:
+   - Simulações estatísticas
+   - Análise numérica não-sensível
+   - Fins educacionais
+   
+   NÃO adequado para:
+   - Chaves criptográficas
+   - IV (initialization vectors)
+   - Nonces
+   - Qualquer aplicação onde sequências previsíveis são exploráveis
+
+7. 🔍 PRÓXIMOS PASSOS DE INVESTIGAÇÃO:
+   a) Analisar correlação em diferentes lags (2, 4, 8, 16 bytes)
+   b) Testar com diferentes tamanhos de amostra (1MB, 10MB, 100MB)
+   c) Verificar autocorrelação usando análise espectral
+   d) Implementar "thinning" (usar cada K-ésimo byte) e retester
+   e) Analisar bifurcação do mapa caótico - pode ter período crítico
+   f) Comparar com outros CSPRNGs (ChaCha20, AES-CTR) para baseline
+
+
+================================================================================
+
+
+================================================================================
+TESTES NÃO EXECUTADOS (Dependências/Recursos)
+================================================================================
+
+- test_entropy.py: Requer arquivo "dados/bins/agle_bits_1gb.bin" 
+- test_cycle_detection.py: Requer "dados/bins/agle_bits_1gb.bin"
+- test_distribution.py: Requer compilação de programa C externo
+- test_neural_distinguishers.py: Requer PyTorch + CUDA (não configurado)
+- test_neural_distinguishers_v2_improved.py: Requer PyTorch + CUDA
+- test_predictability_ml.py: Requer PyTorch
+- test_prediction.py: Requer configuração adicional
+- test_agle_pure_comprehensive.py: Requer "agle_pure_cascaded_200mb.bin"
+- test_agle_pure_vs_v4.py: Requer PyTorch + CUDA
+
+
+================================================================================
+CONCLUSÃO FINAL E DIAGNÓSTICO
+================================================================================
+
+O algoritmo RCTM (Robust Chaotic Tent Map) apresenta um PADRÃO PARADOXAL:
+
+POSITIVOS:
+  ✅ Excelente distribuição estatística de bits isolados (49.99%)
+  ✅ Entropia Shannon muito alta (7.998/8.0)
+  ✅ Sem autocorrelação linear mensurável
+  ✅ Simetria perfeita entre 0s e 1s
+  ✅ Permutação extremamente aleatória
+
+NEGATIVOS CRÍTICOS:
+  ❌ Previsibilidade serial de 1.63% (N-grams) - ACIMA DO LIMIAR (1.2%)
+  ❌ Cobertura de pares LAG-1 apenas 78.46% - FALTA 21.54% DOS PARES POSSÍVEIS
+  ❌ Distinguível estatisticamente (entropy 0.519 vs ideal 1.0)
+  ❌ 17+ falhas em teste Dieharder standard
+  ❌ Dependências NÃO-LINEARES entre bytes (N-gram descobre padrões que 
+      correlação linear não vê)
+
+DIAGNÓSTICO:
+O RCTM gera bytes que PARECEM aleatórios individualmente, mas NÃO SÃO 
+independentes quando considera-se sequências. Existe uma estrutura oculta que:
+  1. Não is linear (não detectável por Pearson)
+  2. É determinística (previsível por N-gram)
+  3. Cria espaço amostral incompleto (faltam pares)
+  4. É explorada por testes de Dieharder
+
+CAUSA PROVÁVEL:
+O mapa caótico RCTM pode estar gerando sequências com período (ciclo) mais
+curto que esperado, ou com "preferências" estruturais em certos padrões de
+bytes. Isso é comum em mapas caóticos quando não há bastante "mixing".
+
+RECOMENDAÇÃO FINAL: ⚠️  NÃO usar para criptografia
+Use ajustes como:
+  - Aplicar post-processing (XOR com saída de outro PRNG)
+  - Usar apenas cada K-ésimo byte (thinning)
+  - Aplicar hash criptográfico que os outputs
+  - Implementar mais iterações do mapa por byte gerado
+
+
+================================================================================
+Data da geração: 06 de março de 2026
+Executado em: andre-MS-7C96
+================================================================================
