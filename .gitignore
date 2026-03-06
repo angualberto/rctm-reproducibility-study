@@ -1,0 +1,35 @@
+# Arquivos binários de dados
+*.bin
+
+# Arquivos LaTeX temporários
+*.aux
+*.log
+*.out
+*.toc
+*.pdf
+
+# Arquivos Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema
+.DS_Store
+Thumbs.db
